@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sai Sumanth Reddy — Software Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Dark editorial palette (default) */
+    --bg: #0a0a0c;
+    --bg-elev: #111114;
+    --bg-card: #131318;
+    --line: #1f1f25;
+    --line-strong: #2a2a32;
+    --fg: #e8e6e0;
+    --fg-dim: #9c9a93;
+    --fg-faint: #5a5a60;
+    --accent: oklch(0.74 0.13 60);          /* warm amber */
+    --accent-soft: oklch(0.74 0.13 60 / 0.14);
+    --grid: rgba(255,255,255,0.025);
+
+    --serif: "Instrument Serif", "Source Serif Pro", Georgia, serif;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  html[data-theme="light"] {
+    --bg: #f4f2ec;
+    --bg-elev: #ecebe4;
+    --bg-card: #ffffff;
+    --line: #d9d6cc;
+    --line-strong: #bdb9ab;
+    --fg: #16161a;
+    --fg-dim: #55534b;
+    --fg-faint: #8a8678;
+    --accent: oklch(0.55 0.16 50);
+    --accent-soft: oklch(0.55 0.16 50 / 0.10);
+    --grid: rgba(0,0,0,0.035);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { background: var(--bg); color: var(--fg); }
+  body {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--fg);
+    background: var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-position: -1px -1px;
+    cursor: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  @media (max-width: 720px) {
+    body { cursor: auto; }
+    .cursor-ring, .cursor-dot { display: none; }
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* Custom cursor */
+  .cursor-ring, .cursor-dot {
+    position: fixed; pointer-events: none; z-index: 9999;
+    top: 0; left: 0;
+    transform: translate3d(-50%,-50%,0);
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 28px; height: 28px;
+    border: 1px solid var(--fg);
+    border-radius: 50%;
+    transition: width 0.18s ease, height 0.18s ease, border-color 0.18s ease;
+  }
+  .cursor-dot {
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .cursor-ring.hover { width: 48px; height: 48px; border-color: var(--accent); }
+
+  /* Layout helpers */
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 40px; }
+  @media (max-width: 720px) { .wrap { padding: 0 22px; } }
+
+  .mono { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-dim); }
+  .serif { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; }
+
+  .section { padding: 120px 0; border-top: 1px solid var(--line); position: relative; }
+  .section:first-of-type { border-top: none; }
+
+  .sec-head {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 60px;
+    margin-bottom: 64px;
+    align-items: start;
+  }
+  @media (max-width: 720px) { .sec-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 40px; } }
+  .sec-head .num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--fg-faint); padding-top: 12px; }
+  .sec-head h2 { font-family: var(--serif); font-size: 56px; line-height: 1; font-weight: 400; margin: 0; letter-spacing: -0.02em; }
+  .sec-head h2 em { color: var(--accent); font-style: italic; }
+  @media (max-width: 720px) { .sec-head h2 { font-size: 40px; } }
+
+  /* Subtle utility */
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    color: var(--fg-dim);
+    background: var(--bg-elev);
+  }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: oklch(0.7 0.16 145); box-shadow: 0 0 8px oklch(0.7 0.16 145); }
+
+  /* App mount */
+  #root { position: relative; z-index: 1; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 14px 22px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elev);
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    cursor: none;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0a0a0c;
+  }
+  .btn-primary:hover { background: transparent; color: var(--accent); transform: translateY(-1px); }
+
+  /* Nav link hover */
+  .nav-link { transition: color 0.2s ease; }
+  .nav-link:hover { color: var(--fg) !important; }
+
+  /* Project card hover */
+  .project-card {
+    transition: background-color 0.25s ease;
+  }
+  .project-card:hover {
+    background: color-mix(in oklab, var(--accent-soft) 50%, transparent);
+  }
+
+  /* Density */
+  html[data-density="compact"] .section { padding: 80px 0; }
+  html[data-density="compact"] .sec-head { margin-bottom: 40px; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+    .about-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+    .project-row { grid-template-columns: 1fr !important; gap: 28px !important; }
+    .activity-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+    .lang-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+    .exp-row { grid-template-columns: 1fr !important; gap: 16px !important; }
+    .edu-grid { grid-template-columns: 1fr !important; }
+    .stack-grid { grid-template-columns: 1fr !important; }
+    .contact-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+    nav { padding: 14px 20px !important; }
+    nav a:not(:first-child), nav .nav-link { display: none !important; }
+    nav > div:last-child > a { display: none !important; }
+    nav > div:last-child > button { display: flex !important; }
+    .section { padding: 80px 0 !important; }
+  }
+  @media (max-width: 720px) {
+    .sec-head h2 { font-size: 40px !important; }
+  }
+
+  /* Smooth scrolling */
+  html { scroll-behavior: smooth; }
+
+  /* ─── Scroll progress bar ─── */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px;
+    width: 0%; background: var(--accent);
+    z-index: 60; pointer-events: none;
+    box-shadow: 0 0 12px var(--accent-soft);
+    transition: width 0.08s linear;
+  }
+
+  /* ─── Section reveal (IO-driven) ─── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.2,0.7,0.2,1), transform 0.7s cubic-bezier(0.2,0.7,0.2,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal-stagger > * { opacity: 0; transform: translateY(14px); transition: opacity 0.6s cubic-bezier(0.2,0.7,0.2,1), transform 0.6s cubic-bezier(0.2,0.7,0.2,1); }
+  .reveal-stagger.in > * { opacity: 1; transform: translateY(0); }
+  .reveal-stagger.in > *:nth-child(1) { transition-delay: 0.04s; }
+  .reveal-stagger.in > *:nth-child(2) { transition-delay: 0.10s; }
+  .reveal-stagger.in > *:nth-child(3) { transition-delay: 0.16s; }
+  .reveal-stagger.in > *:nth-child(4) { transition-delay: 0.22s; }
+  .reveal-stagger.in > *:nth-child(5) { transition-delay: 0.28s; }
+  .reveal-stagger.in > *:nth-child(6) { transition-delay: 0.34s; }
+
+  /* ─── Nav active link ─── */
+  .nav-link { position: relative; transition: color 0.2s ease; }
+  .nav-link::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -6px;
+    height: 1px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.2,0.7,0.2,1);
+  }
+  .nav-link.active { color: var(--fg) !important; }
+  .nav-link.active::after { transform: scaleX(1); }
+
+  /* ─── Focus rings ─── */
+  :focus { outline: none; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ─── Project expand chevron ─── */
+  .project-card .chev {
+    transition: transform 0.35s cubic-bezier(0.2,0.7,0.2,1);
+  }
+  .project-card.open .chev { transform: rotate(180deg); }
+  .project-card .expand-area {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.2,0.7,0.2,1), opacity 0.3s ease;
+  }
+  .project-card.open .expand-area {
+    max-height: 600px;
+    opacity: 1;
+  }
+
+  /* ─── Smooth theme transition ─── */
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-duration: 0.25s;
+    transition-timing-function: cubic-bezier(0.2,0.7,0.2,1);
+  }
+
+  /* ─── Reduced motion ─── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .reveal, .reveal-stagger > * { opacity: 1 !important; transform: none !important; }
+    .heat-cell { animation: none !important; opacity: 1 !important; }
+  }
+
+  /* ─── Heatmap fill-in ─── */
+  @keyframes heatFill {
+    0%   { opacity: 0; transform: scale(0.4); }
+    60%  { opacity: 1; }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .heat-cell {
+    opacity: 0;
+    animation: heatFill 0.6s cubic-bezier(0.2,0.7,0.2,1) forwards;
+  }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <div class="scroll-progress" id="scroll-progress"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+  <div class="cursor-dot" id="cursor-dot"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <!-- Custom cursor (vanilla, before React) -->
+  <script>
+    (function(){
+      // Scroll progress bar
+      const prog = document.getElementById('scroll-progress');
+      const onScroll = () => {
+        const h = document.documentElement;
+        const max = h.scrollHeight - h.clientHeight;
+        const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+        if (prog) prog.style.width = pct + '%';
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      const ring = document.getElementById('cursor-ring');
+      const dot = document.getElementById('cursor-dot');
+      if (!ring || !dot) return;
+      let tx = 0, ty = 0, rx = 0, ry = 0;
+      window.addEventListener('mousemove', (e) => {
+        tx = e.clientX; ty = e.clientY;
+        dot.style.transform = `translate3d(${tx}px, ${ty}px, 0) translate(-50%,-50%)`;
+      });
+      function tick(){
+        rx += (tx - rx) * 0.18;
+        ry += (ty - ry) * 0.18;
+        ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%,-50%)`;
+        requestAnimationFrame(tick);
+      }
+      tick();
+      document.addEventListener('mouseover', (e) => {
+        if (e.target.closest('a, button, [data-hover], input, textarea, label')) ring.classList.add('hover');
+      });
+      document.addEventListener('mouseout', (e) => {
+        if (e.target.closest('a, button, [data-hover], input, textarea, label')) ring.classList.remove('hover');
+      });
+
+      // Magnetic buttons — subtle pull toward cursor
+      document.addEventListener('mousemove', (e) => {
+        document.querySelectorAll('[data-magnetic]').forEach(el => {
+          const r = el.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          const dx = e.clientX - cx;
+          const dy = e.clientY - cy;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 120) {
+            const strength = (1 - dist / 120) * 6;
+            el.style.transform = `translate(${(dx / dist) * strength}px, ${(dy / dist) * strength}px)`;
+          } else {
+            el.style.transform = '';
+          }
+        });
+      });
+
+      // Global reveal observer — auto-reveals .section elements
+      const setupReveal = () => {
+        const targets = document.querySelectorAll('.section');
+        if (!targets.length) return false;
+        targets.forEach(t => {
+          if (!t.classList.contains('reveal') && !t.classList.contains('in')) t.classList.add('reveal');
+        });
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              e.target.classList.add('in');
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+        targets.forEach(t => io.observe(t));
+        return true;
+      };
+      // React mounts after this script, so retry until sections exist
+      let tries = 0;
+      const tryReveal = () => {
+        if (setupReveal() || tries++ > 40) return;
+        setTimeout(tryReveal, 80);
+      };
+      tryReveal();
+    })();
+  </script>
+
+  <script src="image-slot.js"></script>
+  <script type="text/babel" src="components.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>
