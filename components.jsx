@@ -143,7 +143,7 @@ function Hero() {
 
       <div className="wrap" style={{ width: '100%', position: 'relative', zIndex: 2 }}>
         {/* Status pill */}
-        <div style={layer(15)}>
+        <div style={{ ...layer(15), opacity: 0, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>
           <span className="pill" data-hover>
             <span className="dot"></span>
             Available · Lead Software Engineer @ Hotkey Solutions
@@ -160,9 +160,14 @@ function Hero() {
           fontWeight: 400,
           ...layer(25),
         }}>
-          <span style={{ display: 'block', color: 'var(--fg)' }}>Sai Sumanth</span>
           <span style={{ display: 'block', color: 'var(--fg)' }}>
-            Reddy<span style={{ color: 'var(--accent)' }}>.</span>
+            <span className="word-rise" style={{ animationDelay: '120ms' }}>Sai</span>
+            {' '}
+            <span className="word-rise" style={{ animationDelay: '210ms' }}>Sumanth</span>
+          </span>
+          <span style={{ display: 'block', color: 'var(--fg)' }}>
+            <span className="word-rise" style={{ animationDelay: '300ms' }}>Reddy</span>
+            <span className="word-rise" style={{ animationDelay: '360ms', color: 'var(--accent)' }}>.</span>
           </span>
         </h1>
 
@@ -173,6 +178,8 @@ function Hero() {
           gap: 80,
           marginTop: 48,
           alignItems: 'start',
+          opacity: 0,
+          animation: 'fadeUp 0.65s cubic-bezier(0.16,1,0.3,1) 0.44s both',
         }} className="hero-grid">
           <p style={{
             fontFamily: 'var(--serif)',
@@ -196,7 +203,7 @@ function Hero() {
         </div>
 
         {/* CTAs */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 56, ...layer(6) }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 56, ...layer(6), opacity: 0, animation: 'fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) 0.62s both' }}>
           <a href="#work" className="btn btn-primary" data-hover data-magnetic>
             View selected work <span style={{ marginLeft: 8 }}>→</span>
           </a>
@@ -277,17 +284,56 @@ function About() {
 }
 
 function Stat({ k, v, sub }) {
+  const [vis, setVis] = useState(false);
+  const [display, setDisplay] = useState('—');
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let started = false;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting || started) return;
+      started = true;
+      io.disconnect();
+      setVis(true);
+      const m = String(v).match(/^([-−]?)([\d.]+)(.*)$/);
+      if (!m) { setDisplay(v); return; }
+      const [, sign, raw, suf] = m;
+      const target = parseFloat(raw);
+      const t0 = performance.now();
+      const tick = (now) => {
+        const p = Math.min((now - t0) / 1400, 1);
+        const eased = 1 - Math.pow(1 - p, 4);
+        setDisplay(sign + Math.round(target * eased) + suf);
+        if (p < 1) requestAnimationFrame(tick);
+        else setDisplay(v);
+      };
+      requestAnimationFrame(tick);
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [v]);
+
   return (
-    <div style={{
+    <div ref={ref} style={{
       border: '1px solid var(--line)', background: 'var(--bg-card)',
       padding: '24px 26px', borderRadius: 4,
       display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'baseline', gap: 16,
+      opacity: vis ? 1 : 0,
+      transform: vis ? 'translateY(0)' : 'translateY(18px)',
+      transition: 'opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1)',
     }} data-hover>
       <div>
         <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--fg-faint)', marginBottom: 6 }}>{k}</div>
         <div style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--fg-dim)' }}>{sub}</div>
       </div>
-      <div style={{ fontFamily: 'var(--serif)', fontSize: 48, lineHeight: 1, color: 'var(--accent)' }}>{v}</div>
+      <div style={{
+        fontFamily: 'var(--serif)', fontSize: 48, lineHeight: 1, color: 'var(--accent)',
+        transform: vis ? 'scale(1)' : 'scale(0.8)',
+        transition: 'transform 0.65s cubic-bezier(0.16,1,0.3,1)',
+        display: 'inline-block',
+      }}>{display}</div>
     </div>
   );
 }
@@ -921,6 +967,18 @@ function summarizeEvent(ev) {
 
 function GitHubActivity() {
   const [data, setData] = useState({ user: null, repos: null, err: null });
+  const [barVis, setBarVis] = useState(false);
+  const barRef = useRef(null);
+
+  useEffect(() => {
+    const el = barRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setBarVis(true); io.disconnect(); }
+    }, { threshold: 0.5 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -976,14 +1034,20 @@ function GitHubActivity() {
 
           <div>
             {/* The bar */}
-            <div style={{
+            <div ref={barRef} style={{
               height: 14, borderRadius: 999, overflow: 'hidden', display: 'flex',
               background: 'var(--line)',
               boxShadow: 'inset 0 0 0 1px var(--line)',
             }}>
-              {langs.map(l => (
+              {langs.map((l, i) => (
                 <div key={l.name} title={`${l.name} · ${l.count} repo${l.count === 1 ? '' : 's'}`}
-                  style={{ width: `${l.pct}%`, background: langColor(l.name), transition: 'width 0.8s cubic-bezier(0.2,0.7,0.2,1)' }} />
+                  style={{
+                    width: `${l.pct}%`,
+                    background: langColor(l.name),
+                    transform: barVis ? 'scaleX(1)' : 'scaleX(0)',
+                    transformOrigin: 'left',
+                    transition: `transform ${0.7 + i * 0.06}s cubic-bezier(0.16,1,0.3,1) ${i * 0.04}s`,
+                  }} />
               ))}
             </div>
 
@@ -1148,6 +1212,18 @@ function Experience() {
 
 // -------- Stack --------
 function Stack() {
+  const [stackVis, setStackVis] = useState(false);
+  const stackRef = useRef(null);
+  useEffect(() => {
+    const el = stackRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setStackVis(true); io.disconnect(); }
+    }, { threshold: 0.1 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   const groups = [
     { k: 'Languages', v: ['Java 17', 'TypeScript', 'JavaScript', 'Python', 'Go', 'SQL', 'Bash', 'C / C++'] },
     { k: 'Backend', v: ['Spring Boot', 'Spring Batch', 'Spring Cloud', 'Micronaut', 'Node.js'] },
@@ -1167,7 +1243,7 @@ function Stack() {
           <span className="num">§ 05 · Stack</span>
           <h2>Tools I <em>reach for</em>.</h2>
         </div>
-        <div style={{
+        <div ref={stackRef} style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '0',
@@ -1183,12 +1259,16 @@ function Stack() {
             }}>
               <div className="mono" style={{ paddingTop: 4 }}>{g.k}</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {g.v.map(t => (
-                  <span key={t} style={{
-                    fontFamily: 'var(--mono)', fontSize: 12,
-                    padding: '4px 10px', border: '1px solid var(--line-strong)',
-                    borderRadius: 2, color: 'var(--fg)',
-                  }}>{t}</span>
+                {g.v.map((t, ti) => (
+                  <span key={t}
+                    className={stackVis ? 'tag-pop' : ''}
+                    style={{
+                      fontFamily: 'var(--mono)', fontSize: 12,
+                      padding: '4px 10px', border: '1px solid var(--line-strong)',
+                      borderRadius: 2, color: 'var(--fg)',
+                      opacity: stackVis ? undefined : 0,
+                      animationDelay: stackVis ? `${(i * 3 + ti) * 30}ms` : undefined,
+                    }}>{t}</span>
                 ))}
               </div>
             </div>

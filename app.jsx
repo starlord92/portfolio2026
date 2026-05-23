@@ -163,6 +163,7 @@ function App() {
         <GitHubActivity />
         <Experience />
         <Stack />
+        <Contact />
       </main>
       <Footer />
       <GalleryPanel />

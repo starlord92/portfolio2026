@@ -274,6 +274,46 @@
     opacity: 0;
     animation: heatFill 0.6s cubic-bezier(0.2,0.7,0.2,1) forwards;
   }
+
+  /* ─── Page entrance ─── */
+  @keyframes pageReveal { from { opacity: 0; } to { opacity: 1; } }
+  body { animation: pageReveal 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+
+  /* ─── Word rise (inline — blur+lift) ─── */
+  @keyframes wordRise {
+    from { opacity: 0; transform: translateY(0.32em); filter: blur(4px); }
+    to   { opacity: 1; transform: translateY(0);      filter: blur(0);   }
+  }
+  .word-rise {
+    display: inline-block;
+    opacity: 0;
+    animation: wordRise 0.62s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* ─── Fade-up (block elements) ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+
+  /* ─── Tag pop (scroll-triggered via JS class) ─── */
+  @keyframes tagPop {
+    from { opacity: 0; transform: translateY(6px) scale(0.93); }
+    to   { opacity: 1; transform: translateY(0)   scale(1);    }
+  }
+  .tag-pop { animation: tagPop 0.34s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+  /* ─── Reduced-motion overrides ─── */
+  @media (prefers-reduced-motion: reduce) {
+    body { animation: none !important; opacity: 1 !important; }
+    .word-rise, .tag-pop {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+    }
+    [style*="animation: fadeUp"] { animation: none !important; opacity: 1 !important; transform: none !important; }
+  }
 </style>
 </head>
 <body>
